@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bite Code - Training Station</title>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================================================================
+           1. CORE DESIGN SYSTEM & THEME
+           ========================================================================== */
+        :root {
+            --bg-base: #0B0B0D;
+            --bg-surface: rgba(22, 23, 26, 0.75);
+            --bg-sidebar: rgba(15, 16, 18, 0.9);
+            --bg-field: #050506;
+            --border-normal: #26272B;
+            --brand-orange: #E06928;
+            --brand-glow: rgba(224, 105, 40, 0.3);
+            --text-main: #FFFFFF;
+            --text-darker: #8A8F98;
+            --text-error: #FF4A4A;
+            --text-success: #27C93F;
+            --success-glow: rgba(39, 201, 63, 0.35);
+            
+            --font-display: 'Space Grotesk', sans-serif;
+            --font-sans: 'Inter', sans-serif;
+            --transition-smooth: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        body { 
+            background-color: var(--bg-base); 
+            color: var(--text-main); 
+            font-family: var(--font-sans); 
+            min-height: 100vh;
+            overflow-x: hidden;
+            background-image: linear-gradient(rgba(224, 105, 40, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(224, 105, 40, 0.03) 1px, transparent 1px);
+            background-size: 30px 30px;
+        }
+
+        .hidden { display: none !important; }
+
+        /* ==========================================================================
+           2. BRAND LOGO COMPONENT (REPLICATING THE IMAGE ACCURATELY)
+           ========================================================================== */
+        .brand-logo-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+        }
+
+        .logo-graphic-circle {
+            width: 110px;
+            height: 110px;
+            border: 3.5px solid #FFFFFF;
+            border-radius: 50%;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #000000;
+            /* Precise multi-arc mask layer to form a detailed bite mark chunk */
+            mask: radial-gradient(circle at 98px 30px, transparent 18px, #fff 19px),
+                  radial-gradient(circle at 86px 12px, transparent 14px, #fff 15px),
+                  radial-gradient(circle at 104px 54px, transparent 14px, #fff 15px);
+            -webkit-mask: radial-gradient(circle at 96px 28px, transparent 18px, #fff 19px),
+                          radial-gradient(circle at 86px 10px, transparent 13px, #fff 14px),
+                          radial-gradient(circle at 103px 52px, transparent 13px, #fff 14px);
+        }
+
+        .logo-graphic-circle::before {
+            content: 'B';
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 3.2rem;
+            color: #FFFFFF;
+            position: absolute;
+            left: 42px;
+            top: 48%;
+            transform: translateY(-50%);
+        }
+
+        .logo-brackets {
+            position: absolute;
+            left: 8px;
+            top: 45%;
+            transform: translateY(-50%);
+            color: var(--brand-orange);
+            font-family: var(--font-display);
+            font-weight: 700;
+            font-size: 1.5rem;
+            letter-spacing: -1px;
+        }
+
+        .logo-binary-drift {
+            position: absolute;
+            right: 6px;
+            top: 25%;
+            font-family: monospace;
+            font-size: 0.65rem;
+            line-height: 0.85;
+            color: var(--brand-orange);
+            text-align: left;
+            opacity: 0.95;
+            font-weight: bold;
+        }
+
+        .logo-text-title {
+            font-family: var(--font-display);
+            font-size: 2.2rem;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-top: 10px;
+            color: #FFFFFF;
+        }
+        .logo-text-title span { color: var(--brand-orange); }
+
+        .logo-slogan {
+            font-family: var(--font-display);
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-darker);
+            margin-top: 4px;
+            border-left: 12px solid var(--brand-orange);
+            border-right: 12px solid var(--brand-orange);
+            padding: 0 8px;
+        }
+
+        /* Mini Navbar Version */
+        .mini-logo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 20px; }
+        .mini-circle { width: 40px; height: 40px; border: 2px solid #fff; border-radius: 50%; position: relative; background: #000; }
+        .mini-circle::before { content: 'B'; font-family: var(--font-display); font-weight: 700; font-size: 1.3rem; color: #fff; position: absolute; left: 16px; top: 45%; transform: translateY(-50%); }
+        .mini-brackets { position: absolute; left: 3px; top: 43%; transform: translateY(-50%); color: var(--brand-orange); font-size: 0.65rem; font-weight: 700; }
+
+        /* ==========================================================================
+           3. PAGE 1: SIGN IN TERMINAL VIEWPORT
+           ========================================================================== */
+        .login-gateway-canvas {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .login-card-panel {
+            width: 100%;
+            max-width: 440px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-normal);
+            border-radius: 24px;
+            padding: 40px 30px;
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), 0 0 40px rgba(224, 105, 40, 0.05);
+        }
+
+        .input-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 20px; }
+        .input-label { font-family: var(--font-display); font-weight: 700; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; color: var(--text-darker); }
+        .input-field { width: 100%; background: var(--bg-field); border: 1px solid var(--border-normal); border-radius: 12px; padding: 15px 16px; font-family: var(--font-sans); font-size: 0.95rem; color: #fff; transition: var(--transition-smooth); }
+        .input-field:focus { border-color: var(--brand-orange); box-shadow: 0 0 12px var(--brand-glow); background: rgba(224,105,40, 0.02); }
+
+        .btn-trigger { width: 100%; padding: 16px; border: none; border-radius: 12px; font-family: var(--font-display); font-weight: 700; font-size: 1rem; cursor: pointer; background: var(--brand-orange); color: #fff; transition: var(--transition-smooth); box-shadow: 0 4px 15px var(--brand-glow); text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-trigger:hover { background: #C7561A; transform: translateY(-1px); }
+
+        /* ==========================================================================
+           4. PAGE 2: WORKSPACE APP SHELL
+           ========================================================================== */
+        .app-workspace-shell { display: flex; min-height: 100vh; width: 100%; }
+        
+        /* Sidebar layout */
+        .sidebar-node { width: 280px; background: var(--bg-sidebar); border-right: 1px solid var(--border-normal); padding: 30px 20px; display: flex; flex-direction: column; gap: 24px; position: sticky; top: 0; height: 100vh; }
+        .profile-box { background: rgba(255,255,255,0.02); border: 1px solid var(--border-normal); border-radius: 16px; padding: 20px; text-align: center; }
+        
+        .avatar-frame { width: 75px; height: 75px; background: var(--bg-field); border: 2.5px solid var(--brand-orange); border-radius: 50%; margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 2.3rem; box-shadow: 0 0 15px var(--brand-glow); cursor: pointer; transition: var(--transition-smooth); }
+        .avatar-frame:hover { transform: scale(1.08); border-color: #fff; }
+        .avatar-hint-text { font-size: 0.68rem; color: var(--text-darker); text-transform: uppercase; letter-spacing: 0.5px; display: block; margin-bottom: 12px; }
+        
+        /* 10 Avatar Selector Grid */
+        .avatar-dropdown-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; background: var(--bg-field); border: 1px solid var(--border-normal); border-radius: 10px; padding: 8px; margin-bottom: 12px; }
+        .avatar-choice-btn { font-size: 1.3rem; padding: 4px; background: transparent; border: none; cursor: pointer; transition: transform 0.2s; display: flex; align-items: center; justify-content: center; }
+        .avatar-choice-btn:hover { transform: scale(1.25); }
+
+        .profile-name { font-size: 1.1rem; font-weight: 600; color: #fff; }
+        .profile-badge { font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; padding: 3px 10px; border-radius: 5px; display: inline-block; margin-top: 6px; border: 1px solid var(--border-normal); }
+        .profile-badge.admin-mode { color: var(--brand-orange); background: var(--brand-glow); border-color: rgba(224, 105, 40, 0.4); }
+        .profile-badge.student-mode { color: var(--text-success); background: rgba(39, 201, 63, 0.1); border-color: rgba(39, 201, 63, 0.2); }
+
+        .btn-disconnect { background: transparent; border: 1px solid var(--border-normal); color: var(--text-darker); padding: 12px; border-radius: 10px; cursor: pointer; margin-top: auto; font-family: var(--font-display); font-weight: 700; transition: var(--transition-smooth); }
+        .btn-disconnect:hover { border-color: var(--text-error); color: var(--text-error); background: rgba(255, 74, 74, 0.05); }
+
+        /* Main Feed View streams */
+        .workspace-feed-content { flex: 1; padding: 40px 50px; display: flex; flex-direction: column; align-items: center; }
+        .center-feed-wrapper { width: 100%; max-width: 960px; display: flex; flex-direction: column; }
+
+        .section-header { margin-bottom: 35px; }
+        .section-header h1 { font-family: var(--font-display); font-size: 2.2rem; letter-spacing: -0.5px; }
+        .section-header h1 span { color: var(--brand-orange); }
+        .section-header p { color: var(--text-darker); margin-top: 6px; font-size: 0.95rem; }
+
+        /* Admin Console Controls */
+        .admin-creation-panel { background: var(--bg-surface); border: 1px dashed var(--brand-orange); padding: 24px; border-radius: 16px; margin-bottom: 35px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
+        .admin-panel-title { font-family: var(--font-display); font-size: 1rem; color: var(--brand-orange); margin-bottom: 16px; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px; }
+        .admin-input-row { display: grid; grid-template-columns: 1fr 1.5fr auto; gap: 14px; align-items: end; }
+
+        /* ==========================================================================
+           5. 5 GLOWY MODULE CARD BOXES (CENTERED FOCUS)
+           ========================================================================== */
+        .modules-centered-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(290px, 1fr)); gap: 24px; width: 100%; margin: 0 auto; }
+        
+        .glowy-module-box { 
+            background: var(--bg-surface); 
+            border: 1px solid var(--border-normal); 
+            border-radius: 16px; 
+            padding: 28px; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: space-between; 
+            min-height: 250px; 
+            backdrop-filter: blur(12px); 
+            position: relative; 
+            overflow: hidden; 
+            transition: var(--transition-smooth); 
+            box-shadow: 0 6px 20px rgba(0,0,0,0.4), 0 0 20px rgba(224, 105, 40, 0.05); 
+        }
+        .glowy-module-box::before { content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: var(--brand-orange); opacity: 0.7; }
+        .glowy-module-box:hover { transform: translateY(-4px); border-color: var(--brand-orange); box-shadow: 0 12px 30px rgba(0, 0, 0, 0.6), 0 0 25px var(--brand-glow); }
+        
+        /* Glow Green Modification Rules for 3/3 Perfect Assessment Score */
+        .glowy-module-box.mastered-green-glow { border-color: var(--text-success) !important; box-shadow: 0 12px 35px rgba(0, 0, 0, 0.7), 0 0 30px var(--success-glow) !important; }
+        .glowy-module-box.mastered-green-glow::before { background: var(--text-success) !important; }
+        .glowy-module-box.mastered-green-glow .module-badge { color: var(--text-success); background: rgba(39, 201, 63, 0.1); border-color: rgba(39, 201, 63, 0.2); }
+        .glowy-module-box.mastered-green-glow .btn-learn-trigger { background: var(--text-success); box-shadow: 0 4px 15px rgba(39, 201, 63, 0.25); }
+        .glowy-module-box.mastered-green-glow .btn-learn-trigger:hover { background: #21A835; }
+
+        .module-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .module-badge { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--brand-orange); background: rgba(224, 105, 40, 0.08); padding: 4px 10px; border-radius: 20px; border: 1px solid rgba(224, 105, 40, 0.15); }
+        .module-index { font-family: var(--font-display); font-size: 1.2rem; color: rgba(255,255,255,0.1); font-weight: 700; }
+        
+        .glowy-module-box h3 { font-size: 1.3rem; color: #fff; margin-bottom: 8px; font-family: var(--font-display); }
+        .glowy-module-box p { font-size: 0.88rem; color: var(--text-darker); line-height: 1.5; margin-bottom: 20px; }
+        
+        .btn-learn-trigger { width: 100%; padding: 12px; background: var(--brand-orange); border: none; color: #fff; font-family: var(--font-display); font-weight: 700; font-size: 0.9rem; border-radius: 10px; cursor: pointer; transition: var(--transition-smooth); display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 4px 12px rgba(224, 105, 40, 0.15); text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-learn-trigger:hover { background: #C7561A; }
+        
+        .btn-admin-remove { width: 100%; padding: 8px; background: rgba(255, 74, 74, 0.04); border: 1px solid rgba(255, 74, 74, 0.2); color: var(--text-error); font-family: var(--font-display); font-weight: 700; font-size: 0.78rem; border-radius: 8px; cursor: pointer; margin-top: 10px; transition: var(--transition-smooth); text-transform: uppercase; }
+        .btn-admin-remove:hover { background: var(--text-error); color: #fff; border-color: var(--text-error); }
+
+        /* ==========================================================================
+           6. QUIZ PLAYGROUND SCREEN (SCROLLING IN DEPTH)
+           ========================================================================== */
+        .quiz-arena-layout { flex: 1; padding: 40px 50px; display: flex; flex-direction: column; align-items: center; }
+        .quiz-scroll-container { width: 100%; max-width: 680px; display: flex; flex-direction: column; gap: 28px; padding-bottom: 80px; }
+        
+        .arena-nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; width: 100%; max-width: 680px; }
+        .btn-return { background: transparent; border: 1px solid var(--border-normal); color: var(--text-darker); padding: 10px 18px; border-radius: 8px; cursor: pointer; font-family: var(--font-display); font-weight: 700; font-size: 0.88rem; transition: var(--transition-smooth); }
+        .btn-return:hover { border-color: var(--brand-orange); color: var(--brand-orange); }
+
+        .question-stream-card { background: var(--bg-surface); border: 1px solid var(--border-normal); border-radius: 20px; padding: 32px; box-shadow: 0 12px 40px rgba(0,0,0,0.4); backdrop-filter: blur(15px); }
+        .question-meta-tag { font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--brand-orange); margin-bottom: 10px; display: inline-block; }
+        .question-text-prompt { font-size: 1.15rem; margin-bottom: 22px; color: #fff; line-height: 1.5; font-weight: 500; }
+        
+        .options-vertical-stack { display: flex; flex-direction: column; gap: 12px; }
+        .quiz-choice-row { width: 100%; padding: 14px 20px; background: var(--bg-field); border: 1px solid var(--border-normal); border-radius: 10px; color: #fff; text-align: left; font-size: 0.95rem; cursor: pointer; transition: var(--transition-smooth); font-family: var(--font-sans); }
+        .quiz-choice-row:hover { border-color: var(--brand-orange); background: rgba(224, 105, 40, 0.03); }
+        
+        .quiz-choice-row.state-correct { background: rgba(39, 201, 63, 0.12) !important; border-color: var(--text-success) !important; color: var(--text-success) !important; font-weight: 600; }
+        .quiz-choice-row.state-wrong { background: rgba(255, 74, 74, 0.12) !important; border-color: var(--text-error) !important; color: var(--text-error) !important; }
+
+        .solution-trace-box { background: rgba(224, 105, 40, 0.06); border-left: 3px solid var(--brand-orange); padding: 16px; border-radius: 0 10px 10px 0; margin-top: 18px; font-size: 0.9rem; color: #ffb894; line-height: 1.4; }
+        .solution-trace-box strong { color: #fff; display: block; margin-bottom: 4px; font-family: var(--font-display); text-transform: uppercase; font-size: 0.8rem; letter-spacing: 0.5px; }
+
+        /* ==========================================================================
+           7. ASSESSMENT RESULT DRAWER SLIDEOUT PANEL
+           ========================================================================== */
+        .drawer-dimmer-blur { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(5px); z-index: 998; opacity: 0; pointer-events: none; transition: opacity 0.35s ease; }
+        .drawer-dimmer-blur.is-visible { opacity: 1; pointer-events: auto; }
+
+        .result-slide-drawer { position: fixed; bottom: 0; left: 50%; transform: translate(-50%, 100%); width: 100%; max-width: 580px; background: #111215; border-top: 3px solid var(--brand-orange); border-radius: 24px 24px 0 0; padding: 35px 30px 45px; box-shadow: 0 -15px 50px rgba(0, 0, 0, 0.8); z-index: 999; transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); text-align: center; border-left: 1px solid var(--border-normal); border-right: 1px solid var(--border-normal); }
+        .result-slide-drawer.is-visible { transform: translate(-50%, 0); }
+        
+        .drawer-score-ring { width: 95px; height: 95px; border-radius: 50%; border: 3px solid var(--brand-orange); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-family: var(--font-display); font-weight: 700; margin: 0 auto 20px; background: var(--brand-glow); box-shadow: 0 0 25px var(--brand-glow); color: #fff; }
+        .drawer-score-ring.perfect-score { border-color: var(--text-success); background: rgba(39, 201, 63, 0.15); box-shadow: 0 0 25px var(--success-glow); color: var(--text-success); }
+
+        .result-slide-drawer h3 { font-family: var(--font-display); font-size: 1.4rem; margin-bottom: 8px; color: #fff; }
+        .result-slide-drawer p { font-size: 0.92rem; color: var(--text-darker); margin-bottom: 24px; line-height: 1.4; }
+
+        /* Toast notifications system */
+        .toast-popup-tray { position: fixed; top: 24px; right: 24px; z-index: 2000; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast-banner { background: #16171a; border-left: 4px solid var(--brand-orange); color: #fff; padding: 14px 20px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.4); font-size: 0.9rem; font-weight: 500; transform: translateX(120%); transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1); border: 1px solid var(--border-normal); display: flex; align-items: center; gap: 8px; }
+        .toast-banner.show { transform: translateX(0); }
+    </style>
+</head>
+<body>
+
+    <div class="toast-popup-tray" id="toastTray"></div>
+
+    <!-- ==========================================================================
+       VIEW SHIFT 1: ACCESS LOGIN GATEWAY PORTAL
+       ========================================================================== -->
+    <div class="login-gateway-canvas" id="viewLoginGateway">
+        <div class="login-card-panel">
+            
+            <!-- OFFICIAL IMAGE REPLICA BRANDING LOGO -->
+            <div class="brand-logo-container">
+                <div class="logo-graphic-circle">
+                    <div class="logo-brackets">&lt;/&gt;</div>
+                    <div class="logo-binary-drift">0 1 1<br>1 0 0<br>0 0 1<br>1 0 1<br>0</div>
+                </div>
+                <div class="logo-text-title">Bite <span>Code</span></div>
+               <form style="margin-top: 10px;" onsubmit="executeProfileAuthentication(event)">
+                <div class="input-group">
+                    <label class="input-label">Username</label>
+                    <input type="text" class="input-field" id="formUserKey" placeholder="Enter username" required>
+                </div>
+                <div class="input-group" style="margin-bottom: 28px;">
+                    <label class="input-label">Password</label>
+                    <input type="password" class="input-field" id="formPassKey" placeholder="••••••••••••" required>
+                </div>
+                <button type="submit" class="btn-trigger">Sign in</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================================================
+       VIEW SHIFT 2: PRIMARY WORKSPACE LAYOUT CONTAINER (HIDDEN ON START)
+       ========================================================================== -->
+    <div class="app-workspace-shell hidden" id="viewAppWorkspace">
+        
+        <!-- SIDEBAR UTILITIES -->
+        <aside class="sidebar-node">
+            <div class="mini-logo-row">
+                <div class="mini-circle"><div class="mini-brackets">&lt;/&gt;</div></div>
+                <div class="logo-text-title" style="font-size: 1.1rem; margin-top: 0; letter-spacing: 1px;">Bite <span>Code</span></div>
+            </div>
+
+            <div class="profile-box">
+                <div class="avatar-frame" id="displayAvatarNode" onclick="toggleAvatarPanelVisibility()">🦊</div>
+                <span class="avatar-hint-text">Choose Identity</span>
+
+                <!-- 10 SEPARATE ANIMAL OPTIONS -->
+                <div class="avatar-dropdown-grid hidden" id="avatarPickerDropdown">
+                    <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🦊')">🦊</button>
+                    <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🦁')">🦁</button>
+                    <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🐼')">🐼</button>
+                    <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🐸')">🐸</button>
+                    <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🐨')">🐨</button>
+                    <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🦖')">🦖</button>
+                    <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🐱')">🐱</button>
+                    <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🐧')">🐧</button>
+                    <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🐶')">🐶</button>
+                    <button class="avatar-choice-btn" onclick="updateActiveAvatarEmoji('🐵')">🐵</button>
+                </div>
+
+                <div class="profile-name" id="displayProfileName">Developer Node</div>
+                <div class="profile-badge student-mode" id="displayRoleBadge">Student</div>
+            </div>
+
+            <button class="btn-disconnect" onclick="triggerSessionTermination()">Disconnect Terminal</button>
+        </aside>
+
+        <!-- SUB-PAGE A: CENTRALIZED 5 CORE TOPICS DASHBOARD LAYER -->
+        <main class="workspace-feed-content" id="subPageDashboard">
+            <div class="center-feed-wrapper">
+                <header class="section-header">
+                    <h1><span>//</span> PYTHON FOUNDATION OVERVIEW</h1>
+                    <p>Select an isolated learning block node below to initialize structural compiler validation runs.</p>
+                </header>
+
+                <!-- ADMIN CONTROL MODULE CREATION PANEL -->
+                <div class="admin-creation-panel hidden" id="adminControlConsole">
+                    <div class="admin-panel-title">👑 PRIVILEGED ROOT CONSOLE: DEPLOY NEW ARCS</div>
+                    <div class="admin-input-row">
+                        <div class="input-group" style="margin-bottom:0;">
+                            <label class="input-label" style="font-size:0.68rem;">Arc Module Title</label>
+                            <input type="text" class="input-field" id="adminFieldTitle" placeholder="e.g., File I/O Streams" style="padding: 11px 14px;">
+                        </div>
+                        <div class="input-group" style="margin-bottom:0;">
+                            <label class="input-label" style="font-size:0.68rem;">Short Technical Description</label>
+                            <input type="text" class="input-field" id="adminFieldDesc" placeholder="e.g., Manage persistent structural storage records." style="padding: 11px 14px;">
+                        </div>
+                        <button class="btn-trigger" onclick="injectAdminDefinedModuleNode()" style="padding: 12px 22px; font-size: 0.85rem; border-radius: 10px; width: auto;">Deploy Module Block</button>
+                    </div>
+                </div>
+
+                <!-- 5 CORE GLOWY MODULE BOXES CONTAINER -->
+                <section class="modules-centered-grid" id="dashboardModulesGrid">
+                    <!-- Loaded dynamically via engine script mapping -->
+                </section>
+            </div>
+        </main>
+
+        <!-- SUB-PAGE B: SCROLLING QUIZ HOUSING FRAMEWORK -->
+        <main class="quiz-arena-layout hidden" id="subPageQuizArena">
+            <div class="arena-nav-bar">
+                <div class="section-header" style="margin-bottom:0;">
+                    <h1 id="arenaHeaderTitle" style="font-size: 1.6rem;"><span>//</span> RUNTIME CHALLENGE</h1>
+                </div>
+                <button class="btn-return" onclick="abortArenaSession()">&larr; Dashboard Grid</button>
+            </div>
+
+            <!-- SCROLLABLE STACK FRAME -->
+            <div class="quiz-scroll-container">
+                
+                <!-- QUESTION UNIT 1: MCQ -->
+                <div class="question-stream-card">
+                    <span class="question-meta-tag">Level 01: Multi-Choice Syntax Verification (MCQ)</span>
+                    <div class="question-text-prompt" id="promptTextQ0">Loading challenge metrics...</div>
+                    <div class="options-vertical-stack" id="stackOptionsQ0"></div>
+                    <div class="solution-trace-box hidden" id="traceBoxQ0"></div>
+                </div>
+
+                <!-- QUESTION UNIT 2: TRUE / FALSE -->
+                <div class="question-stream-card">
+                    <span class="question-meta-tag">Level 02: Logical Condition Integrity (True/False)</span>
+                    <div class="question-text-prompt" id="promptTextQ1">Loading challenge metrics...</div>
+                    <div class="options-vertical-stack" id="stackOptionsQ1"></div>
+                    <div class="solution-trace-box hidden" id="traceBoxQ1"></div>
+                </div>
+
+                <!-- QUESTION UNIT 3: REUSABLE CODE RIDDLE -->
+                <div class="question-stream-card">
+                    <span class="question-meta-tag">Level 03: Logic Compilation Riddle</span>
+                    <div class="question-text-prompt" id="promptTextQ2">Loading challenge metrics...</div>
+                    <div class="options-vertical-stack" id="stackOptionsQ2"></div>
+                    <div class="solution-trace-box hidden" id="traceBoxQ2"></div>
+                </div>
+
+                <button class="btn-trigger" style="padding: 18px; margin-top: 10px;" onclick="compileAnswersAndOpenDrawer()">Compile Performance Evaluation</button>
+            </div>
+
+            <!-- MODAL SHEET DRAWER COMPONENT FOR RESULTS -->
+            <div class="drawer-dimmer-blur" id="drawerDimmer" onclick="hideEvaluationDrawer()"></div>
+            <div class="result-slide-drawer" id="evaluationDrawer">
+                <div class="drawer-score-ring" id="drawerScoreRing">0/3</div>
+                <h3 id="drawerStatusHeading">Assessment Evaluated</h3>
+                <p id="drawerStatusMessage">System state matrices synchronized properly with internal parameter validation files.</p>
+                <button class="btn-trigger" onclick="saveProgressAndExitArena()">Commit Result Metrics & Exit</button>
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- ==========================================================================
+       8. SYSTEM CENTRAL APPLICATION RUNTIME SCRIPT
+       ========================================================================== -->
+    <script>
+        // Pre-loaded Dataset of 5 Python Foundation Topics in highly clear, simple language
+        let MasterModuleDatabase = [
+            {
+                id: "mod_py_1",
+                title: "Variables & Boxes",
+                desc: "Learn how Python remembers data by creating simple labeled containers to store numbers or text values without complicated declarations.",
+                questions: [
+                    { q: "Which instruction safely assigns the value 10 inside a container labeled 'score'?", opts: ["score == 10", "score = 10", "int score = 10", "score : 10"], ans: 1, exp: "In Python, a single '=' sign acts as an assignment action to place values inside variable names safely." },
+                    { q: "True or False: Python automatically recognizes text variables without you specifying an explicit data type definition.", opts: ["True", "False"], ans: 0, exp: "Python features dynamic typing. It interprets your assignment layout rules intuitively the second you write it." },
+                    { q: "Riddle: 'When you combine two text items together using a '+' operator, I glue them directly instead of doing regular math. What am I?'", opts: ["An Integer", "A Boolean", "A String", "A Float"], ans: 2, exp: "Strings represent text chains. The addition operator (+) acts to concatenate or glue them directly into one piece." }
+                ]
+            },
+            {
+                id: "mod_py_2",
+                title: "Decision Tracks",
+                desc: "Guide your code down multiple runtime pathways using straightforward tracking blocks like true and false balance checkpoints.",
+                questions: [
+                    { q: "Which precise shorthand keyword helps evaluate an alternative extra statement if your primary 'if' path fails?", opts: ["else if", "elseif", "elif", "switch"], ans: 2, exp: "Python shortens the compound logical phrase 'else if' down directly into the structural keyword 'elif'." },
+                    { q: "True or False: Aligning code blocks with matching indent spaces is entirely optional when organizing logic rules.", opts: ["True", "False"], ans: 1, exp: "Spaces are mandatory in Python. Indents tell the compiler exactly which statements are wrapped within individual conditions." },
+                    { q: "Riddle: 'I am a structural logic path. I run my operations ONLY if my entry gate determines that the condition evaluates to a completely false flag. Who am I?'", opts: ["The 'if' gate", "The 'elif' branch", "The 'else' scope", "The 'while' loop"], ans: 2, exp: "The 'else' code scope triggers as a catch-all block whenever the preceding conditional logic expressions fail." }
+                ]
+            },
+            {
+                id: "mod_py_3",
+                title: "Loop Machines",
+                desc: "Instruct your system to repeat complex computational blocks dynamically until target performance parameters are satisfied.",
+                questions: [
+                    { q: "Which operational keyword allows a script to immediately exit out of an active running loop ahead of schedule?", opts: ["halt", "break", "continue", "skip"], ans: 1, exp: "The 'break' control instruction drops completely out of an active loop scope onto the subsequent code block below." },
+                    { q: "True or False: A standard 'while' loop keeps repeating its internal tracking block continuously as long as its trigger state reads True.", opts: ["True", "False"], ans: 0, exp: "While loops evaluate their entry criteria before every cycle. They iterate as long as that conditional statement yields True." },
+                    { q: "Riddle: 'If you instruct a standard iteration range to boot up with range(0, 5), how many times total will the loop machine repeat its logic?'", opts: ["4 times", "5 times", "6 times", "0 times"], ans: 1, exp: "A range(0, 5) yields numbers 0, 1, 2, 3, and 4. This corresponds to exactly 5 completed validation loop blocks." }
+                ]
+            },
+            {
+                id: "mod_py_4",
+                title: "Function Modules",
+                desc: "Group loose lines of text code together into cleanly named, modular packages that can be awoken and re-run whenever needed.",
+                questions: [
+                    { q: "What specific core definition keyword initializes a brand new reusable block package?", opts: ["function", "def", "package", "void"], ans: 1, exp: "The keyword 'def' stands for define. It tells Python you are initializing a reusable chunk of custom instruction logic." },
+                    { q: "True or False: A custom function block must always output data using a return command, or it will generate an error crash.", opts: ["True", "False"], ans: 1, exp: "Functions run fine without explicit return calls. They execute tasks smoothly and naturally yield 'None' implicitly." },
+                    { q: "Riddle: 'I act as an internal placeholder inside a function definition, patiently waiting to absorb live parameters when you call me. What do coders label me?'", opts: ["An Output Key", "An Argument / Parameter", "A Local Loop", "A Global Float"], ans: 1, exp: "Parameters are specified inside function definitions to receive input values when the code executes." }
+                ]
+            },
+            {
+                id: "mod_py_5",
+                title: "List Arrays",
+                desc: "Store multiple items sequentially within an organized collection framework, making it easy to sort and catalog long lists of data.",
+                questions: [
+                    { q: "Which pair of brackets instructs Python that you are constructing a list array item collection?", opts: ["( ) parenthetical", "{ } curly", "[ ] square", "< > chevron"], ans: 2, exp: "Square brackets [ ] signal to Python that a mutable, ordered list structure is being created." },
+                    { q: "True or False: Python collections index addresses start counting positions from 1 on the far left.", opts: ["True", "False"], ans: 1, exp: "Python lists use zero-based indexing. The very first element in an array structure is accessed at position 0." },
+                    { q: "Riddle: 'If you inspect an array tracking the integers [99, 101, 204], what index parameter will fetch the value 101 out cleanly?'", opts: ["Index 0", "Index 1", "Index 2", "Index -3"], ans: 1, exp: "Since indexing initiates from zero, index 0 targets 99, and index 1 maps onto the center integer 101." }
+                ]
+            }
+        ];
+
+        // Central System Operational States
+        let currentAuthenticatedUser = "";
+        let isSystemAdminNodeActive = false;
+        let selectedTargetArcId = "";
+        let globalUserPerformanceState = {}; 
+        let activeArenaVerificationMap = [null, null, null];
+
+        // Toast notifications logic
+        function pushNotificationToast(messageText, themeColor = "orange") {
+            const tray = document.getElementById('toastTray');
+            const element = document.createElement('div');
+            element.className = 'toast-banner';
+            if (themeColor === "green") element.style.borderLeftColor = "var(--text-success)";
+            element.innerHTML = `⚙️ <span>${messageText}</span>`;
+            tray.appendChild(element);
+            
+            setTimeout(() => element.classList.add('show'), 40);
+            setTimeout(() => {
+                element.classList.remove('show');
+                setTimeout(() => element.remove(), 300);
+            }, 3000);
+        }
+
+        function toggleAvatarPanelVisibility() {
+            document.getElementById('avatarPickerDropdown').classList.toggle('hidden');
+        }
+
+        function updateActiveAvatarEmoji(emojiChar) {
+            document.getElementById('displayAvatarNode').textContent = emojiChar;
+            document.getElementById('avatarPickerDropdown').classList.add('hidden');
+            pushNotificationToast(`Avatar altered to ${emojiChar}`, "green");
+        }
+
+        /* 🔐 PAGE 1 ROUTER: AUTHENTICATE USER PRIVILEGES */
+        function executeProfileAuthentication(eventObj) {
+            eventObj.preventDefault();
+            const userInpt = document.getElementById('formUserKey').value.trim();
+            const passInpt = document.getElementById('formPassKey').value;
+
+            // Updated Admin parameters mapping user's requirements
+            if (userInpt === "arya19" && passInpt === "mane099") {
+                isSystemAdminNodeActive = true;
+                currentAuthenticatedUser = "arya19";
+                pushNotificationToast("Root Administrative Privileges Active.", "green");
+                launchMainWorkspaceAppShell();
+            } else {
+                // Any alternate verification values safely default to Student restriction parameters
+                isSystemAdminNodeActive = false;
+                currentAuthenticatedUser = userInpt;
+                pushNotificationToast("Student Verification Successful.", "green");
+                launchMainWorkspaceAppShell();
+            }
+        }
+
+        /* PAGE 2 ROUTER: SPIN UP TERMINAL WORKSPACE DESK ENVIRONMENT */
+        function launchMainWorkspaceAppShell() {
+            document.getElementById('viewLoginGateway').classList.add('hidden');
+            document.getElementById('viewAppWorkspace').classList.remove('hidden');
+            
+            document.getElementById('displayProfileName').textContent = currentAuthenticatedUser;
+            const badge = document.getElementById('displayRoleBadge');
+            const consoleBlock = document.getElementById('adminControlConsole');
+
+            if (isSystemAdminNodeActive) {
+                document.getElementById('displayAvatarNode').textContent = "👑";
+                badge.textContent = "Admin";
+                badge.className = "profile-badge admin-mode";
+                consoleBlock.classList.remove('hidden');
+            } else {
+                document.getElementById('displayAvatarNode').textContent = "🦊";
+                badge.textContent = "Student";
+                badge.className = "profile-badge student-mode";
+                consoleBlock.classList.add('hidden');
+            }
+
+            renderDashboardModules();
+        }
+
+        function triggerSessionTermination() {
+            document.getElementById('viewAppWorkspace').classList.add('hidden');
+            document.getElementById('viewLoginGateway').classList.remove('hidden');
+            document.getElementById('avatarPickerDropdown').classList.add('hidden');
+            
+            document.getElementById('formUserKey').value = "";
+            document.getElementById('formPassKey').value = "";
+            currentAuthenticatedUser = "";
+            isSystemAdminNodeActive = false;
+            pushNotificationToast("Terminal Stream Disconnected Safely.");
+        }
+
+        /* 📊 CORE MODULE CARDS ENGINE */
+        function renderDashboardModules() {
+            const grid = document.getElementById('dashboardModulesGrid');
+            grid.innerHTML = "";
+
+            MasterModuleDatabase.forEach((node, index) => {
+                const numericString = String(index + 1).padStart(2, '0');
+                const lastRecordedScore = globalUserPerformanceState[node.id] || 0;
+                const isFullyMastered = lastRecordedScore === 3;
+
+                const wrapperBox = document.createElement('div');
+                // Adds green glow if module is mastered (3/3)
+                wrapperBox.className = `glowy-module-box ${isFullyMastered ? 'mastered-green-glow' : ''}`;
+                wrapperBox.id = node.id;
+
+                let actionElementsHtml = `<button class="btn-learn-trigger" onclick="engageQuizArenaSession('${node.id}')">Let's Learn &rarr;</button>`;
+                
+                // Privileged admin removal hook injection
+                if (isSystemAdminNodeActive) {
+                    actionElementsHtml += `<button class="btn-admin-remove" onclick="removeActiveModuleBlockNode(event, '${node.id}')">Remove Module Node</button>`;
+                }
+
+                wrapperBox.innerHTML = `
+                    <div class="module-header">
+                        <div class="module-badge">${isFullyMastered ? '✅ Mastery Verified' : 'Module ' + numericString}</div>
+                        <div class="module-index">${numericString}</div>
+                    </div>
+                    <div>
+                        <h3>${node.title}</h3>
+                        <p>${node.desc}</p>
+                    </div>
+                    <div>
+                        ${actionElementsHtml}
+                    </div>
+                `;
+                grid.appendChild(wrapperBox);
+            });
+        }
+
+        /* ADMIN FUNCTION: INJECT NEW TOPIC MODULE DATA RECORD */
+        function injectAdminDefinedModuleNode() {
+            const tVal = document.getElementById('adminFieldTitle').value.trim();
+            const dVal = document.getElementById('adminFieldDesc').value.trim();
+
+            if (!tVal || !dVal) {
+                pushNotificationToast("Input data truncated! Define title and descriptive text strings.");
+                return;
+            }
+
+            const autoGeneratedId = "mod_custom_" + Date.now();
+            MasterModuleDatabase.push({
+                id: autoGeneratedId,
+                title: tVal,
+                desc: dVal,
+                questions: [
+                    { q: "Sample Entry: Which assignment approach aligns with primitive standard parameters?", opts: ["Data tracking variables", "Standard initialization sequences", "Implicit compiler calls"], ans: 1, exp: "Default structural tracking placeholders generated by ecosystem script tools." },
+                    { q: "True or False: Added architectural units are configured instantly as functional modules.", opts: ["True", "False"], ans: 0, exp: "Dynamic script updates mount user custom records into active memory cycles immediately." },
+                    { q: "Riddle: 'I track custom structures introduced into application matrices. What container type records me?'", opts: ["System Framework Object", "Dynamic Array Unit"], ans: 0, exp: "The foundational layout storage handles tracking updates systematically." }
+                ]
+            });
+
+            document.getElementById('adminFieldTitle').value = "";
+            document.getElementById('adminFieldDesc').value = "";
+            pushNotificationToast(`Successfully cataloged block arc: ${tVal}`, "green");
+            renderDashboardModules();
+        }
+
+        /* ADMIN FUNCTION: REMOVE MODULE STRATIFICATION ARCHITECTURE */
+        function removeActiveModuleBlockNode(eventObj, targetedNodeId) {
+            eventObj.stopPropagation(); // Block interactive button bubbling routines
+            const index = MasterModuleDatabase.findIndex(m => m.id === targetedNodeId);
+            if (index !== -1) {
+                const preservedTitleString = MasterModuleDatabase[index].title;
+                MasterModuleDatabase.splice(index, 1);
+                delete globalUserPerformanceState[targetedNodeId];
+                
+                pushNotificationToast(`Dropped element array segment: ${preservedTitleString}`);
+                renderDashboardModules();
+            }
+        }
+
+        /* 🎯 INTERACTIVE SUB-PAGE B: QUIZ OPERATIONS & SELECTIONS */
+        function engageQuizArenaSession(targetId) {
+            selectedTargetArcId = targetId;
+            activeArenaVerificationMap = [null, null, null];
+
+            const targetObj = MasterModuleDatabase.find(m => m.id === targetId);
+            document.getElementById('arenaHeaderTitle').innerHTML = `<span>//</span> RUNTIME: ${targetObj.title.toUpperCase()}`;
+
+            // Reset dynamic text displays
+            for (let i = 0; i < 3; i++) {
+                document.getElementById(`traceBoxQ${i}`).classList.add('hidden');
+            }
+
+            document.getElementById('subPageDashboard').classList.add('hidden');
+            document.getElementById('subPageQuizArena').classList.remove('hidden');
+            window.scrollTo(0, 0);
+
+            buildScrolledArenaQuestionsDeck(targetObj);
+        }
+
+        function buildScrolledArenaQuestionsDeck(targetObj) {
+            const datasetArray = targetObj.questions;
+
+            datasetArray.forEach((item, questionIndex) => {
+                document.getElementById(`promptTextQ${questionIndex}`).textContent = item.q;
+                const choicesWrapperNode = document.getElementById(`stackOptionsQ${questionIndex}`);
+                choicesWrapperNode.innerHTML = "";
+
+                item.opts.forEach((optionText, optionIndex) => {
+                    const rowButton = document.createElement('button');
+                    rowButton.className = 'quiz-choice-row';
+                    rowButton.textContent = optionText;
+                    rowButton.onclick = () => logChoiceSelection(questionIndex, optionIndex, rowButton);
+                    choicesWrapperNode.appendChild(rowButton);
+                });
+            });
+        }
+
+        function logChoiceSelection(qIdx, selectedChoiceIdx, selectedElementRef) {
+            if (activeArenaVerificationMap[qIdx] !== null) return; // Freeze selection shifts upon choice confirmation
+
+            const activeObjectRef = MasterModuleDatabase.find(m => m.id === selectedTargetArcId);
+            const standardAnswerKey = activeObjectRef.questions[qIdx].ans;
+            const fullOptionsSet = document.getElementById(`stackOptionsQ${qIdx}`).querySelectorAll('.quiz-choice-row');
+
+            if (selectedChoiceIdx === standardAnswerKey) {
+                selectedElementRef.classList.add('state-correct');
+                activeArenaVerificationMap[qIdx] = true;
+            } else {
+                selectedElementRef.classList.add('state-wrong');
+                fullOptionsSet[standardAnswerKey].classList.add('state-correct');
+                activeArenaVerificationMap[qIdx] = false;
+
+                // Render explanation row beneath choice arrays if answer is wrong
+                const tracerElement = document.getElementById(`traceBoxQ${qIdx}`);
+                tracerElement.innerHTML = `<strong>💡 Solution Blueprint Trace:</strong> ${activeObjectRef.questions[qIdx].exp}`;
+                tracerElement.classList.remove('hidden');
+            }
+        }
+
+        /* 🗂️ EVALUATION DRAWER MECHANICS */
+        function compileAnswersAndOpenDrawer() {
+            let runningCorrectCount = 0;
+            activeArenaVerificationMap.forEach(state => { if (state === true) runningCorrectCount++; });
+
+            // Buffer localized tracking score parameters
+            globalUserPerformanceState[selectedTargetArcId] = runningCorrectCount;
+
+            const ring = document.getElementById('drawerScoreRing');
+            const head = document.getElementById('drawerStatusHeading');
+            const msg = document.getElementById('drawerStatusMessage');
+
+            ring.textContent = `${runningCorrectCount}/3`;
+
+            if (runningCorrectCount === 3) {
+                ring.classList.add('perfect-score');
+                head.textContent = "Ecosystem Sync Optimal! (3/3)";
+                msg.textContent = "All unit evaluation tasks parsed cleanly against blueprint compilers. Module core glows green.";
+            } else {
+                ring.classList.remove('perfect-score');
+                head.textContent = "Assessment Records Stored";
+                msg.textContent = "Calculated metrics injected successfully into runtime configuration profiles. Review data charts to achieve perfection.";
+            }
+
+            document.getElementById('drawerDimmer').classList.add('is-visible');
+            document.getElementById('evaluationDrawer').classList.add('is-visible');
+        }
+
+        function hideEvaluationDrawer() {
+            document.getElementById('drawerDimmer').classList.remove('is-visible');
+            document.getElementById('evaluationDrawer').classList.remove('is-visible');
+        }
+
+        function saveProgressAndExitArena() {
+            hideEvaluationDrawer();
+            renderDashboardModules();
+            setTimeout(abortArenaSession, 150);
+        }
+
+        function abortArenaSession() {
+            document.getElementById('subPageQuizArena').classList.add('hidden');
+            document.getElementById('subPageDashboard').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
+    </script>
+</body>
+</html>
